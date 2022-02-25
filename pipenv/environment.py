@@ -357,7 +357,9 @@ class Environment:
         tmpfile_path = make_posix(tmpfile.name)
         py_command = self.build_command(python_lib=True, python_inc=True, scripts=True, py_version=True)
         command = [self.python, "-c", py_command.format(tmpfile_path)]
-        c = subprocess_run(command)
+        WINDOWS = sys.platform.startswith("win") or (sys.platform == "cli" and os.name == "nt")
+        shell = True if WINDOWS else False
+        c = subprocess_run(command, shell=shell)
         if c.returncode == 0:
             paths = {}
             with open(tmpfile_path, "r", encoding="utf-8") as fh:
